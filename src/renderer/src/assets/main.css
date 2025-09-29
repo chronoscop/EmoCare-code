@@ -1,0 +1,142 @@
+@import './base.css';
+
+body {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: linear-gradient(to right, #2eced9, #5B86E5);
+  background-size: cover;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  height: 100vh;
+}
+
+code {
+  font-weight: 600;
+  padding: 3px 5px;
+  border-radius: 2px;
+  background-color: var(--color-background-mute);
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    SF Mono,
+    Menlo,
+    Consolas,
+    Liberation Mono,
+    monospace;
+  font-size: 85%;
+}
+
+#app {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-bottom: 80px;
+}
+
+.logo {
+  margin-bottom: 20px;
+  -webkit-user-drag: none;
+  height: 128px;
+  width: 128px;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 1.2em #6988e6aa);
+}
+
+.creator {
+  font-size: 14px;
+  line-height: 16px;
+  color: var(--ev-c-text-2);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.text {
+  font-size: 28px;
+  color: var(--ev-c-text-1);
+  font-weight: 700;
+  line-height: 32px;
+  text-align: center;
+  margin: 0 10px;
+  padding: 16px 0;
+}
+
+.tip {
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--ev-c-text-2);
+  font-weight: 600;
+}
+
+.vue {
+  background: -webkit-linear-gradient(315deg, #42d392 25%, #647eff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  font-size: 30px;
+}
+
+.navigation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; 
+  display: flex;
+  justify-content: center;
+  background-color: #d4e7f9; 
+  padding: 12px 0; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); 
+}
+
+.navigation a {
+  color: #333; 
+  margin: 0 20px; 
+  text-decoration: none; 
+  margin: 0 150px; 
+  font-weight: bold; 
+  font-size: 18px;
+  transition: color 0.3s ease; 
+}
+
+.navigation a:hover {
+  color: #73e312;
+}
+.about {
+  position: fixed;
+  top: 75px;
+  left:50%;
+  transform: translate(-50%, -50%); 
+  font-size: 48px; 
+  font-weight: bold;
+  color: pink; 
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
+  cursor: pointer; 
+  transition: all 0.3s ease; 
+}
+.about:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  color: #ff6347;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8); 
+}
+.introduce {
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  color: #333;
+  font-weight: bold;
+  font-style: italic;
+  background-color: #f2f2f2;
+  padding: 30px; 
+  max-height: 860px; 
+  overflow-y: auto; 
+  position: relative;
+  left: 52px;
+  top: 95px;
+  width: 1600px;
+}
+
