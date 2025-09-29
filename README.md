@@ -1,4 +1,4 @@
-# itemman
+# EmoCare-code
 
 An Electron application with Vue
 
