@@ -9,6 +9,10 @@ This is the codebase for [EmoCare](https://github.com/chronoscop/EmoCare).
 ## 📂 Repository Usage
 
 This repository is **open-source** and ready to use. To get started:
+1. **Install Node.js (v18+ or v20+)**  
+   Ensure you have **Node.js 18+** installed. You can download it from:  [https://nodejs.org](https://nodejs.org)  
+   
+   > ✅ electron-vite requires Node.js version 18+, 20+ and Vite version 4.0+
 
 1. Clone the repository:
 
