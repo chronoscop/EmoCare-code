@@ -125,5 +125,4 @@ This project uses **electron-vite** as its build tool. For more information, vis
 
 Apache-2.0 License — see `LICENSE` file.
 
-
-
+------
