@@ -123,6 +123,6 @@ This project uses **electron-vite** as its build tool. For more information, vis
 
 ## 📄 License
 
-Apache-2.0 License — see `LICENSE` file.
+Apache-2.0 License — see [`LICENSE`](LICENSE) file.
 
 ------
