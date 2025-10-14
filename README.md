@@ -104,7 +104,7 @@ Follow the prompts to select:
 
 - Project name: `your project name`
 - Select a framework: `Vue`
-- Add TypeScript? `Yes/No` (recommended)
+- Add TypeScript? `Yes/No`
 - Add Electron updater plugin? `Yes/No` (optional)
 - Enable Electron download mirror proxy? `Yes/No` (optional)
 
