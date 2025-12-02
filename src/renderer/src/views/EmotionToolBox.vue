@@ -15,9 +15,9 @@
         </label>
         <label>
           <span class="label-text">💭 Emotion:</span>
-          <input 
-            v-model="newEntry.emotion" 
-            type="text" 
+          <input
+            v-model="newEntry.emotion"
+            type="text"
             placeholder="How are you feeling?"
             class="form-input"
           />
@@ -103,10 +103,10 @@ export default {
     formatDate(dateString) {
       if (!dateString) return ''
       const date = new Date(dateString)
-      return date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
       })
     },
     saveEntries() {
@@ -437,13 +437,11 @@ export default {
     min-height: calc(100vh - 70px);
     overflow-y: auto;
   }
-  
   .form-and-entries {
     flex-direction: column;
     height: auto;
     overflow-y: visible;
   }
-  
   .diary-form,
   .entry-list {
     width: 100%;
@@ -451,17 +449,14 @@ export default {
     overflow-y: visible;
     padding-right: 25px;
   }
-  
   .form-textarea {
     min-height: 300px;
     max-height: 300px;
   }
-  
   .entry-item {
     flex-direction: column;
     gap: 10px;
   }
-  
   .delete-btn {
     align-self: flex-end;
     margin-left: 0;

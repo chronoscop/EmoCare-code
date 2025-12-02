@@ -9,31 +9,21 @@
         </h3>
         <label>
           <span class="label-text">📌 Event Title:</span>
-          <input 
-            v-model="newEvent.title" 
-            type="text" 
-            required 
+          <input
+            v-model="newEvent.title"
+            type="text"
+            required
             placeholder="Enter event title"
             class="form-input"
           />
         </label>
         <label>
           <span class="label-text">🕐 Start Time:</span>
-          <input 
-            v-model="newEvent.start" 
-            type="datetime-local" 
-            required 
-            class="form-input"
-          />
+          <input v-model="newEvent.start" type="datetime-local" required class="form-input" />
         </label>
         <label>
           <span class="label-text">🕑 End Time:</span>
-          <input 
-            v-model="newEvent.end" 
-            type="datetime-local" 
-            required 
-            class="form-input"
-          />
+          <input v-model="newEvent.end" type="datetime-local" required class="form-input" />
         </label>
         <button type="submit" class="submit-btn">
           <span class="btn-icon">➕</span>
@@ -103,12 +93,11 @@ export default {
     addEvent() {
       const startDate = new Date(this.newEvent.start)
       const endDate = new Date(this.newEvent.end)
-      
+
       if (endDate <= startDate) {
         alert('End time must be after start time!')
         return
       }
-      
       const newEvent = {
         title: this.newEvent.title,
         start: startDate,
@@ -495,14 +484,14 @@ export default {
     min-height: calc(100vh - 70px);
     overflow-y: auto;
   }
-  
+
   .calendar-sidebar {
     width: 100%;
     height: auto;
     overflow-y: visible;
     padding-right: 0;
   }
-  
+
   .calendar-wrapper {
     width: 100%;
     min-width: 100%;
@@ -516,17 +505,15 @@ export default {
   .calendar-container {
     padding: 15px;
   }
-  
+
   .event-form,
   .event-list {
     padding: 20px;
   }
-  
   .event-item {
     flex-direction: column;
     gap: 10px;
   }
-  
   .delete-btn {
     align-self: flex-end;
     margin-left: 0;

@@ -12,11 +12,7 @@
           Vue Dependencies
         </h2>
         <transition-group name="list" tag="ul" class="dependency-list">
-          <li 
-            v-for="dependency in dependencies" 
-            :key="dependency.name" 
-            class="list-item"
-          >
+          <li v-for="dependency in dependencies" :key="dependency.name" class="list-item">
             <div class="item-content">
               <span class="package-name">{{ dependency.name }}</span>
               <span class="package-version">{{ dependency.version }}</span>
@@ -31,11 +27,7 @@
           Vue DevDependencies
         </h2>
         <transition-group name="list" tag="ul" class="dependency-list">
-          <li 
-            v-for="devDependency in devDependencies" 
-            :key="devDependency.name" 
-            class="list-item"
-          >
+          <li v-for="devDependency in devDependencies" :key="devDependency.name" class="list-item">
             <div class="item-content">
               <span class="package-name">{{ devDependency.name }}</span>
               <span class="package-version">{{ devDependency.version }}</span>
@@ -141,7 +133,8 @@ export default {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -268,7 +261,6 @@ export default {
   .dependencies-container {
     flex-wrap: wrap;
   }
-  
   .dependency-section {
     min-width: 300px;
     flex: 1 1 calc(50% - 15px);
@@ -279,25 +271,20 @@ export default {
   .introduce {
     padding: 20px;
   }
-  
   .about {
     font-size: 2rem;
   }
-  
   .about-icon {
     font-size: 2rem;
   }
-  
   .dependencies-container {
     flex-direction: column;
     gap: 20px;
   }
-  
   .dependency-section {
     min-width: 100%;
     flex: 1 1 100%;
   }
-  
   .section {
     font-size: 1.3rem;
   }
