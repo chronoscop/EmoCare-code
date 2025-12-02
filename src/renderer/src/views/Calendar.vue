@@ -1,39 +1,83 @@
 <!-- Calendar.vue -->
 <template>
   <div class="calendar-container">
-    <form class="event-form" @submit.prevent="addEvent">
-      <label>
-        Event Title:
-        <input v-model="newEvent.title" type="text" required style="color: black" />
-      </label>
-      <label>
-        Start Time:
-        <input v-model="newEvent.start" type="datetime-local" required style="color: black" />
-      </label>
-      <label>
-        End Time:
-        <input v-model="newEvent.end" type="datetime-local" required style="color: black" />
-      </label>
-      <button type="submit">Add Event</button>
-    </form>
-    <div class="event-list">
-      <h3>Event List</h3>
-      <ul>
-        <li v-for="(event, index) in events" :key="index">
-          {{ event.title }} ({{ new Date(event.start).toLocaleString() }} -
-          {{ new Date(event.end).toLocaleString() }})
-          <button @click="deleteEvent(index)">Delete</button>
-        </li>
-      </ul>
+    <div class="calendar-sidebar">
+      <form class="event-form" @submit.prevent="addEvent">
+        <h3 class="form-title">
+          <span class="icon">📅</span>
+          Add New Event
+        </h3>
+        <label>
+          <span class="label-text">📌 Event Title:</span>
+          <input 
+            v-model="newEvent.title" 
+            type="text" 
+            required 
+            placeholder="Enter event title"
+            class="form-input"
+          />
+        </label>
+        <label>
+          <span class="label-text">🕐 Start Time:</span>
+          <input 
+            v-model="newEvent.start" 
+            type="datetime-local" 
+            required 
+            class="form-input"
+          />
+        </label>
+        <label>
+          <span class="label-text">🕑 End Time:</span>
+          <input 
+            v-model="newEvent.end" 
+            type="datetime-local" 
+            required 
+            class="form-input"
+          />
+        </label>
+        <button type="submit" class="submit-btn">
+          <span class="btn-icon">➕</span>
+          Add Event
+        </button>
+      </form>
+      <div class="event-list">
+        <h3 class="list-title">
+          <span class="icon">📋</span>
+          Event List
+          <span v-if="events.length > 0" class="event-count">({{ events.length }})</span>
+        </h3>
+        <div v-if="events.length === 0" class="empty-state">
+          <p class="empty-icon">📭</p>
+          <p class="empty-text">No events scheduled yet</p>
+        </div>
+        <transition-group v-else name="event-list" tag="ul">
+          <li v-for="(event, index) in events" :key="`event-${index}`" class="event-item">
+            <div class="event-content">
+              <div class="event-title">{{ event.title }}</div>
+              <div class="event-time">
+                <span class="time-label">Start:</span> {{ formatDateTime(event.start) }}
+              </div>
+              <div class="event-time">
+                <span class="time-label">End:</span> {{ formatDateTime(event.end) }}
+              </div>
+            </div>
+            <button class="delete-btn" title="Delete event" @click="confirmDelete(index)">
+              <span class="delete-icon">🗑️</span>
+            </button>
+          </li>
+        </transition-group>
+      </div>
     </div>
-    <vue-cal
-      :time-from="0 * 60"
-      :time-to="24 * 60"
-      :time-step="30"
-      hide-weekends
-      :events="events"
-      class="calendar-view"
-    ></vue-cal>
+    <div class="calendar-wrapper">
+      <vue-cal
+        :time-from="0 * 60"
+        :time-to="24 * 60"
+        :time-step="30"
+        hide-weekends
+        :events="events"
+        class="calendar-view"
+      ></vue-cal>
+    </div>
   </div>
 </template>
 
@@ -57,10 +101,18 @@ export default {
   },
   methods: {
     addEvent() {
+      const startDate = new Date(this.newEvent.start)
+      const endDate = new Date(this.newEvent.end)
+      
+      if (endDate <= startDate) {
+        alert('End time must be after start time!')
+        return
+      }
+      
       const newEvent = {
         title: this.newEvent.title,
-        start: new Date(this.newEvent.start),
-        end: new Date(this.newEvent.end)
+        start: startDate,
+        end: endDate
       }
       this.events.push(newEvent)
       this.newEvent.title = ''
@@ -68,9 +120,25 @@ export default {
       this.newEvent.end = ''
       this.saveEvents()
     },
+    confirmDelete(index) {
+      if (confirm('Are you sure you want to delete this event?')) {
+        this.deleteEvent(index)
+      }
+    },
     deleteEvent(index) {
       this.events.splice(index, 1)
       this.saveEvents()
+    },
+    formatDateTime(date) {
+      if (!date) return ''
+      const d = new Date(date)
+      return d.toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
     },
     saveEvents() {
       localStorage.setItem('events', JSON.stringify(this.events))
@@ -89,108 +157,379 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .calendar-container {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 20px;
-  padding: 20px;
+  gap: 25px;
+  padding: 30px 20px;
+  width: 100%;
+  margin: 0 auto;
+  height: calc(100vh - 70px);
+  overflow: hidden;
   position: relative;
-  left: -45%;
 }
+
+.calendar-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  width: 350px;
+  flex-shrink: 0;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 10px;
+}
+
 .event-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  width: 400px;
-  padding: 15px;
-  background: rgba(244, 243, 243, 0.8);
-  border-radius: 10px;
-  position: relative;
-  left: 12%;
-  top: -200px;
+  gap: 18px;
+  padding: 25px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
+
+.form-title {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon {
+  font-size: 1.3rem;
+}
+
 .event-form label {
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
-.event-form button {
-  margin-top: 10px;
-  padding: 10px;
-  background-color: #42b983;
+
+.label-text {
+  font-weight: 600;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.form-input {
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  background-color: #fff;
+  color: #333;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #42b983;
+  box-shadow: 0 0 0 3px rgba(66, 185, 131, 0.1);
+}
+
+.submit-btn {
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #42b983 0%, #369a6e 100%);
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(66, 185, 131, 0.3);
 }
-.event-form button:hover {
-  background-color: #369a6e;
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(66, 185, 131, 0.4);
 }
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+.btn-icon {
+  font-size: 1.1rem;
+}
+
+.calendar-wrapper {
+  flex: 1;
+  min-width: 800px;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 10px;
+}
+
 .calendar-view {
-  flex-grow: 1;
+  width: 100%;
 }
+
 .vuecal {
-  width: 950px;
-  position: fixed;
-  left: 44%;
-  top: 53px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  min-height: fit-content;
 }
+
 .vuecal__menu .vuecal__cell-events-count {
   background-color: #42b983;
 }
+
 .vuecal__title-bar {
-  background-color: #0a8b7a;
+  background: linear-gradient(135deg, #0a8b7a 0%, #42b983 100%);
+  color: white;
 }
+
 .vuecal__cell--today .vuecal__cell--current {
-  background-color: rgba(240, 240, 255, 0.4);
+  background-color: rgba(66, 185, 131, 0.2);
 }
+
 .vuecal:not(.vuecal--day-view) .vuecal__cell--selected {
   background-color: rgba(235, 255, 245, 0.4);
 }
+
 .vuecal__cell--selected:before {
   border-color: rgba(66, 185, 131, 0.5);
 }
+
 .vuecal__cell--highlighted:not(.vuecal__cell--has-splits),
 .vuecal__cell-split--highlighted {
   background-color: rgba(195, 255, 225, 0.5);
 }
+
 .vuecal__arrow.vuecal__arrow--highlighted,
 .vuecal__view-btn.vuecal__view-btn--highlighted {
   background-color: rgba(112, 209, 165, 0.25);
 }
+
 .event-list {
-  position: relative;
-  width: 400px;
-  padding: 15px;
-  background: rgba(254, 45, 45, 0.8);
-  border-radius: 10px;
-  position: relative;
-  left: -39%;
-  top: 150px;
-  max-height: 400px;
+  padding: 25px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  max-height: 500px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.list-title {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(66, 185, 131, 0.3);
+}
+
+.event-count {
+  font-size: 1rem;
+  color: #42b983;
+  font-weight: normal;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.empty-text {
+  font-size: 1rem;
+  color: #666;
 }
 
 .event-list ul {
   list-style-type: none;
   padding: 0;
+  margin: 0;
 }
-.event-list li {
-  margin-bottom: 10px;
+
+.event-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 18px;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border-left: 4px solid #42b983;
 }
-.event-list button {
-  padding: 5px 10px;
-  background-color: #f44336;
-  /* color: white; */
+
+.event-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.event-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.event-title {
+  font-weight: 600;
+  color: #333;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+.event-time {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.time-label {
+  font-weight: 600;
+  color: #555;
+}
+
+.delete-btn {
+  padding: 8px 12px;
+  background-color: #ff6b6b;
+  color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 15px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.event-list button:hover {
-  background-color: #c02525;
+
+.delete-btn:hover {
+  background-color: #ee5a52;
+  transform: scale(1.1);
 }
-.event-list li:hover {
-  background-color: #d2392e;
+
+.delete-icon {
+  font-size: 1.1rem;
+}
+
+/* 事件列表动画 */
+.event-list-enter-active,
+.event-list-leave-active {
+  transition: all 0.4s ease;
+}
+
+.event-list-enter-from {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.event-list-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.event-list-move {
+  transition: transform 0.4s ease;
+}
+
+/* 滚动条样式 */
+.event-list::-webkit-scrollbar,
+.calendar-wrapper::-webkit-scrollbar,
+.calendar-sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.event-list::-webkit-scrollbar-track,
+.calendar-wrapper::-webkit-scrollbar-track,
+.calendar-sidebar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.event-list::-webkit-scrollbar-thumb,
+.calendar-wrapper::-webkit-scrollbar-thumb,
+.calendar-sidebar::-webkit-scrollbar-thumb {
+  background: #42b983;
+  border-radius: 10px;
+}
+
+.event-list::-webkit-scrollbar-thumb:hover,
+.calendar-wrapper::-webkit-scrollbar-thumb:hover,
+.calendar-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #369a6e;
+}
+
+@media (max-width: 1200px) {
+  .calendar-container {
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+    min-height: calc(100vh - 70px);
+    overflow-y: auto;
+  }
+  
+  .calendar-sidebar {
+    width: 100%;
+    height: auto;
+    overflow-y: visible;
+    padding-right: 0;
+  }
+  
+  .calendar-wrapper {
+    width: 100%;
+    min-width: 100%;
+    height: auto;
+    overflow-y: visible;
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar-container {
+    padding: 15px;
+  }
+  
+  .event-form,
+  .event-list {
+    padding: 20px;
+  }
+  
+  .event-item {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .delete-btn {
+    align-self: flex-end;
+    margin-left: 0;
+  }
 }
 </style>

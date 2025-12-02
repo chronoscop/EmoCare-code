@@ -1,13 +1,12 @@
 @import './base.css';
 
 body {
-  display: flex;
-  align-items: center;
-  overflow: hidden;
+  margin: 0;
+  padding: 0;
   background: linear-gradient(to right, #2eced9, #5B86E5);
   background-size: cover;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  height: 100vh;
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
 code {
@@ -28,10 +27,10 @@ code {
 
 #app {
   display: flex;
-  align-items: center;
-  justify-content: center;
   flex-direction: column;
-  margin-bottom: 80px;
+  min-height: 100vh;
+  padding-top: 70px;
+  overflow-y: auto;
 }
 
 .logo {
@@ -86,57 +85,156 @@ code {
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1000; 
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
   display: flex;
-  justify-content: center;
-  background-color: #d4e7f9; 
-  padding: 12px 0; 
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); 
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  height: 70px;
 }
 
-.navigation a {
-  color: #333; 
-  margin: 0 20px; 
-  text-decoration: none; 
-  margin: 0 150px; 
-  font-weight: bold; 
-  font-size: 18px;
-  transition: color 0.3s ease; 
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #42b983;
+  cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
-.navigation a:hover {
-  color: #73e312;
+.nav-brand:hover {
+  transform: scale(1.05);
 }
-.about {
-  position: fixed;
-  top: 75px;
-  left:50%;
-  transform: translate(-50%, -50%); 
-  font-size: 48px; 
-  font-weight: bold;
-  color: pink; 
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
-  cursor: pointer; 
-  transition: all 0.3s ease; 
+
+.brand-icon {
+  font-size: 1.8rem;
+  animation: pulse 2s ease-in-out infinite;
 }
-.about:hover {
-  transform: translate(-50%, -50%) scale(1.1);
-  color: #ff6347;
-  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8); 
+
+.brand-text {
+  background: linear-gradient(135deg, #42b983 0%, #369a6e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
-.introduce {
-  font-family: Arial, sans-serif;
-  font-size: 18px;
-  color: #333;
-  font-weight: bold;
-  font-style: italic;
-  background-color: #f2f2f2;
-  padding: 30px; 
-  max-height: 860px; 
-  overflow-y: auto; 
+
+.nav-links {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  color: #555;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 10px;
+  transition: all 0.3s ease;
   position: relative;
-  left: 52px;
-  top: 95px;
-  width: 1600px;
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(66, 185, 131, 0.1) 0%, rgba(54, 154, 110, 0.1) 100%);
+  transition: left 0.3s ease;
+}
+
+.nav-link:hover::before {
+  left: 0;
+}
+
+.nav-link:hover {
+  color: #42b983;
+  transform: translateY(-2px);
+  background: rgba(66, 185, 131, 0.1);
+}
+
+.nav-link.active {
+  color: #fff;
+  background: linear-gradient(135deg, #42b983 0%, #369a6e 100%);
+  box-shadow: 0 4px 15px rgba(66, 185, 131, 0.3);
+}
+
+.nav-link.active::before {
+  display: none;
+}
+
+.nav-link.active .nav-icon {
+  transform: scale(1.2);
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.nav-label {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@media (max-width: 768px) {
+  #app {
+    padding-top: 60px;
+  }
+  
+  .nav-container {
+    padding: 0 15px;
+    height: 60px;
+  }
+  
+  .nav-brand {
+    font-size: 1.2rem;
+  }
+  
+  .brand-icon {
+    font-size: 1.5rem;
+  }
+  
+  .nav-link {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .nav-label {
+    display: none;
+  }
+  
+  .nav-icon {
+    font-size: 1.5rem;
+  }
 }
 

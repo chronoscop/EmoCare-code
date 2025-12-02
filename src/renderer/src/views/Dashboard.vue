@@ -1,23 +1,76 @@
 <!-- Home.vue -->
 <template>
-  <h1 id="welcome">Welcome,</h1>
-  <p>You're on a roll! Jump back in, or start something new.</p>
-  <div class="mood-selector">
-    <h3 class="mood-question">How are you feeling today?</h3>
-    <div class="mood-options">
-      <button class="mood-btn" @click="selectMood('😊')">😊</button>
-      <button class="mood-btn" @click="selectMood('😔')">😔</button>
-      <button class="mood-btn" @click="selectMood('😡')">😡</button>
-      <button class="mood-btn" @click="selectMood('😐')">😐</button>
-      <button class="mood-btn" @click="selectMood('😁')">😁</button>
+  <div class="dashboard-container">
+    <h1 id="welcome" class="fade-in">Welcome,</h1>
+    <p class="fade-in-delay">You're on a roll! Jump back in, or start something new.</p>
+    <div class="mood-selector fade-in-delay-2">
+      <h3 class="mood-question">How are you feeling today?</h3>
+      <div class="mood-options">
+        <button
+          class="mood-btn"
+          :class="{ active: selectedMood === '😊' }"
+          data-mood="happy"
+          @click="selectMood('😊')"
+        >
+          <span class="emoji-icon">😊</span>
+          <span class="mood-label">Happy</span>
+        </button>
+        <button
+          class="mood-btn"
+          :class="{ active: selectedMood === '😔' }"
+          data-mood="sad"
+          @click="selectMood('😔')"
+        >
+          <span class="emoji-icon">😔</span>
+          <span class="mood-label">Sad</span>
+        </button>
+        <button
+          class="mood-btn"
+          :class="{ active: selectedMood === '😡' }"
+          data-mood="angry"
+          @click="selectMood('😡')"
+        >
+          <span class="emoji-icon">😡</span>
+          <span class="mood-label">Angry</span>
+        </button>
+        <button
+          class="mood-btn"
+          :class="{ active: selectedMood === '😐' }"
+          data-mood="neutral"
+          @click="selectMood('😐')"
+        >
+          <span class="emoji-icon">😐</span>
+          <span class="mood-label">Neutral</span>
+        </button>
+        <button
+          class="mood-btn"
+          :class="{ active: selectedMood === '😁' }"
+          data-mood="excited"
+          @click="selectMood('😁')"
+        >
+          <span class="emoji-icon">😁</span>
+          <span class="mood-label">Excited</span>
+        </button>
+      </div>
+      <transition name="fade-slide">
+        <div v-if="selectedMood" class="selected-mood-display">
+          <p id="selected-mood">Your selected mood:</p>
+          <p id="emoji">{{ selectedMoodMessage }}</p>
+        </div>
+      </transition>
     </div>
-    <p id="selected-mood">Your selected mood will appear here.</p>
-    <p id="emoji">{{ selectedMoodMessage }}</p>
-  </div>
-  <!-- mood suggestion -->
-  <div class="mood-suggestion">
-    <h3>Suggestion for you:</h3>
-    <p id="suggestion">{{ moodSuggestion }}</p>
+    <!-- mood suggestion -->
+    <transition name="fade-slide">
+      <div v-if="moodSuggestion" class="mood-suggestion fade-in-delay-3">
+        <h3>
+          <span class="suggestion-icon">💡</span>
+          Suggestion for you:
+        </h3>
+        <div class="suggestion-content">
+          <p id="suggestion">{{ moodSuggestion }}</p>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -79,162 +132,315 @@ export default {
 }
 </script>
 
-<style>
-/* 全局样式 */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-  box-sizing: border-box;
-  background-color: #f0f0f0;
-  /* 背景颜色 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-/* 外部容器 */
-.container {
-  display: flex;
-  justify-content: space-between;
-  /* 左右分布 */
-  width: 90%;
-  /* 根据屏幕宽度调整 */
+<style scoped>
+.dashboard-container {
+  padding: 30px 20px;
   max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  min-height: calc(100vh - 70px);
 }
 
-/* 左边的部分 */
-.left-section {
-  flex: 1;
-  margin-right: 20px;
-  /* 左右部分的间距 */
+/* 动画效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* 右边的部分 */
-.right-section {
-  flex: 1;
-  margin-left: 20px;
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease-out;
+}
+
+.fade-in-delay {
+  animation: fadeIn 0.8s ease-out 0.2s both;
+}
+
+.fade-in-delay-2 {
+  animation: fadeIn 0.8s ease-out 0.4s both;
+}
+
+.fade-in-delay-3 {
+  animation: fadeIn 0.8s ease-out 0.6s both;
+}
+
+/* 过渡效果 */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.5s ease;
+}
+
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
 }
 
 /* 欢迎标题 */
 #welcome {
   font-size: 3.8vw;
-  /* 使用相对单位，适应不同屏幕尺寸 */
   font-weight: bold;
   color: #fff;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  animation: fadeIn 2s ease-in-out;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
   margin-bottom: 1.2rem;
+  text-align: center;
 }
 
 /* 说明文字 */
-p {
+.dashboard-container > p {
   font-size: 1.2vw;
-  /* 使用相对单位 */
-  color: #000;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  margin-bottom: 1.5rem;
+  color: #fff;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
 /* 心情选择器 */
 .mood-selector {
-  margin: 20px 0;
+  margin: 30px 0;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 心情问题文字 */
+.mood-question {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 25px;
+  text-align: center;
 }
 
 /* 按钮区域 */
 .mood-options {
   display: flex;
-  gap: 10px;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 /* 心情按钮样式 */
 .mood-btn {
-  font-size: 2rem;
-  /* 字体大小使用rem */
-  background-color: #f0f8ff;
-  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 3px solid transparent;
   cursor: pointer;
-  padding: 10px 20px;
-  border-radius: 10px;
-  transition: background-color 0.3s;
+  padding: 20px 25px;
+  border-radius: 15px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  min-width: 100px;
+  position: relative;
+  overflow: hidden;
 }
 
-/* 按钮悬停效果 */
+.mood-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(66, 185, 131, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.mood-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
 .mood-btn:hover {
-  background-color: #87ceeb;
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  border-color: rgba(66, 185, 131, 0.5);
 }
 
-/* 已选心情文字 */
-#selected-mood {
-  font-size: 1.5vw;
-  /* 相对单位，适应不同尺寸 */
-  font-weight: bold;
+.mood-btn:active {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.mood-btn.active {
+  background: linear-gradient(135deg, #42b983 0%, #369a6e 100%);
+  border-color: #42b983;
+  box-shadow: 0 8px 25px rgba(66, 185, 131, 0.4);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.mood-btn.active .emoji-icon {
+  animation: bounce 1s ease-in-out infinite;
+}
+
+.emoji-icon {
+  font-size: 3rem;
+  transition: transform 0.3s;
+  position: relative;
+  z-index: 1;
+}
+
+.mood-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+  position: relative;
+  z-index: 1;
+}
+
+.mood-btn.active .mood-label {
   color: #fff;
-  margin-top: 15px;
 }
 
-/* Emoji 图标 */
+/* 已选心情显示 */
+.selected-mood-display {
+  margin-top: 25px;
+  text-align: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(5px);
+  border-radius: 15px;
+}
+
+#selected-mood {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  margin-bottom: 10px;
+}
+
 #emoji {
-  margin-top: 15px;
   font-size: 4rem;
   font-weight: bold;
   color: #fff;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-/* 心情问题文字 */
-.mood-question {
-  font-size: 1.5rem;
-  font-weight: bold;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+  margin: 0;
 }
 
 /* 心情建议部分 */
 .mood-suggestion {
-  margin-top: 50px;
-  font-size: 1.5rem;
-  color: #fff;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  margin-top: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .mood-suggestion h3 {
-  margin: 0 auto;
-  position: relative;
-  left: 5%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 2rem;
-  color: white;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 20px;
+  text-align: center;
+  justify-content: center;
+}
+
+.suggestion-icon {
+  font-size: 2rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.suggestion-content {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+#suggestion {
+  max-width: 100%;
+  margin: 0;
+  text-align: justify;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #333;
 }
 
 /* 媒体查询：适配不同屏幕尺寸 */
 @media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-    /* 小屏幕上左右部分上下排列 */
-  }
-
   #welcome {
     font-size: 3rem;
   }
 
-  p {
+  .dashboard-container > p {
     font-size: 1rem;
   }
 
   .mood-btn {
-    font-size: 1.5rem;
-    padding: 8px 16px;
+    padding: 15px 20px;
+    min-width: 80px;
+  }
+
+  .emoji-icon {
+    font-size: 2.5rem;
+  }
+
+  .mood-label {
+    font-size: 0.8rem;
   }
 
   #emoji {
     font-size: 3rem;
   }
 
-  .mood-suggestion {
-    font-size: 1rem;
+  .mood-suggestion h3 {
+    font-size: 1.5rem;
   }
 
-  .mood-suggestion p {
-    font-size: 0.9rem;
+  #suggestion {
+    font-size: 0.95rem;
   }
 }
 
@@ -243,18 +449,25 @@ p {
     font-size: 2.5rem;
   }
 
-  p {
+  .dashboard-container > p {
     font-size: 0.9rem;
   }
 
   .mood-options {
-    flex-direction: column;
-    gap: 5px;
+    gap: 10px;
   }
 
   .mood-btn {
-    font-size: 1.2rem;
-    padding: 6px 12px;
+    padding: 12px 15px;
+    min-width: 70px;
+  }
+
+  .emoji-icon {
+    font-size: 2rem;
+  }
+
+  .mood-label {
+    font-size: 0.7rem;
   }
 
   #emoji {
@@ -262,22 +475,16 @@ p {
   }
 
   .mood-suggestion {
-    font-size: 0.9rem;
+    padding: 20px;
   }
 
-  .mood-suggestion p {
-    font-size: 0.8rem;
+  .mood-suggestion h3 {
+    font-size: 1.3rem;
   }
-}
 
-#suggestion {
-  max-width: 90%;
-  position: relative;
-  left: 20px;
-  margin: 0 auto;
-  text-align: justify;
-  font-size: 1.1rem;
-  line-height: 1.6;
-  color: black;
+  #suggestion {
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
 }
 </style>
