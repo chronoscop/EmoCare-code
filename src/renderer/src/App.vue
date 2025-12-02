@@ -7,7 +7,7 @@ const navItems = [
   { path: '/', label: 'Dashboard', icon: '🏠' },
   { path: '/calendar', label: 'Calendar', icon: '📅' },
   { path: '/emotiontoolbox', label: 'Emotion Diary', icon: '📝' },
-  { path: '/about', label: 'About', icon: 'ℹ️' }
+  { path: '/about', label: 'About', icon: 'ℹ️ 💚' }
 ]
 
 const isActive = (path) => {
