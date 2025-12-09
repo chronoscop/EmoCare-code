@@ -25,6 +25,7 @@
         <label>
           <span class="label-text">📝 Notes:</span>
           <textarea
+            ref="notesInput"
             v-model="newEntry.notes"
             placeholder="Write your thoughts here..."
             class="form-textarea"
@@ -55,7 +56,13 @@
               </div>
               <div class="entry-notes">{{ entry.notes }}</div>
             </div>
-            <button class="delete-btn" title="Delete entry" @click="confirmDelete(index)">
+            <button
+              type="button"
+              class="delete-btn"
+              title="Delete entry"
+              @mousedown.prevent
+              @click.stop="confirmDelete(index)"
+            >
               <span class="delete-icon">🗑️</span>
             </button>
           </li>
@@ -80,7 +87,40 @@ export default {
   created() {
     this.loadEntries()
   },
+  mounted() {
+    this.focusNotes()
+  },
   methods: {
+    focusNotes() {
+      this.$nextTick(() => {
+        const input = this.$refs.notesInput
+        if (!input) return
+
+        const blurActive = () => {
+          const active = document.activeElement
+          if (active && active !== input && active.blur) {
+            active.blur()
+          }
+        }
+
+        const focusSafely = () => {
+          if (typeof window !== 'undefined' && window.focus) {
+            window.focus()
+          }
+          blurActive()
+          input.focus()
+          if (input.setSelectionRange) {
+            const len = input.value?.length || 0
+            input.setSelectionRange(len, len)
+          }
+        }
+
+        focusSafely()
+        requestAnimationFrame(() => input.focus())
+        setTimeout(() => input.focus(), 50)
+        setTimeout(() => input.focus(), 150)
+      })
+    },
     addEntry() {
       if (!this.newEntry.notes.trim()) {
         return
@@ -90,11 +130,12 @@ export default {
       this.newEntry.emotion = ''
       this.newEntry.notes = ''
       this.saveEntries()
+      this.focusNotes()
     },
     confirmDelete(index) {
-      if (confirm('Are you sure you want to delete this entry?')) {
-        this.deleteEntry(index)
-      }
+      // 直接删除，避免原生 confirm 抢焦点
+      this.deleteEntry(index)
+      this.focusNotes()
     },
     deleteEntry(index) {
       this.entries.splice(index, 1)

@@ -10,11 +10,14 @@
         <label>
           <span class="label-text">📌 Event Title:</span>
           <input
+            ref="titleInput"
             v-model="newEvent.title"
+            autofocus
             type="text"
             required
             placeholder="Enter event title"
             class="form-input"
+            @click="focusTitleInput"
           />
         </label>
         <label>
@@ -40,8 +43,8 @@
           <p class="empty-icon">📭</p>
           <p class="empty-text">No events scheduled yet</p>
         </div>
-        <transition-group v-else name="event-list" tag="ul">
-          <li v-for="(event, index) in events" :key="`event-${index}`" class="event-item">
+        <ul v-else>
+          <li v-for="(event, index) in events" :key="getEventKey(event, index)" class="event-item">
             <div class="event-content">
               <div class="event-title">{{ event.title }}</div>
               <div class="event-time">
@@ -51,11 +54,17 @@
                 <span class="time-label">End:</span> {{ formatDateTime(event.end) }}
               </div>
             </div>
-            <button class="delete-btn" title="Delete event" @click="confirmDelete(index)">
+            <button
+              type="button"
+              class="delete-btn"
+              title="Delete event"
+              @mousedown.prevent
+              @click.stop="confirmDelete(index)"
+            >
               <span class="delete-icon">🗑️</span>
             </button>
           </li>
-        </transition-group>
+        </ul>
       </div>
     </div>
     <div class="calendar-wrapper">
@@ -89,34 +98,84 @@ export default {
   created() {
     this.loadEvents()
   },
+  mounted() {
+    this.focusTitleInput()
+  },
   methods: {
-    addEvent() {
+    focusTitleInput() {
+      this.$nextTick(() => {
+        const input = this.$refs.titleInput
+        if (!input) return
+
+        // 处理 alert/confirm 后 Electron/浏览器焦点丢失的问题
+        const blurActive = () => {
+          const active = document.activeElement
+          if (active && active !== input && active.blur) {
+            active.blur()
+          }
+        }
+
+        const focusSafely = () => {
+          if (typeof window !== 'undefined' && window.focus) {
+            window.focus()
+          }
+          blurActive()
+          input.focus()
+          if (input.setSelectionRange) {
+            const len = input.value?.length || 0
+            input.setSelectionRange(len, len)
+          }
+        }
+
+        focusSafely()
+        requestAnimationFrame(() => input.focus())
+        setTimeout(() => input.focus(), 50)
+        setTimeout(() => input.focus(), 150)
+      })
+    },
+    addEvent(event) {
+      if (event) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
       const startDate = new Date(this.newEvent.start)
       const endDate = new Date(this.newEvent.end)
 
       if (endDate <= startDate) {
         alert('End time must be after start time!')
+        this.$nextTick(() => this.$refs.titleInput?.focus())
         return
       }
+
       const newEvent = {
         title: this.newEvent.title,
         start: startDate,
         end: endDate
       }
       this.events.push(newEvent)
+
+      // 清空表单
       this.newEvent.title = ''
       this.newEvent.start = ''
       this.newEvent.end = ''
       this.saveEvents()
+      this.focusTitleInput()
     },
     confirmDelete(index) {
-      if (confirm('Are you sure you want to delete this event?')) {
-        this.deleteEvent(index)
-      }
+      // 直接删除，避免原生 confirm 抢夺焦点
+      this.deleteEvent(index)
+      this.focusTitleInput()
     },
     deleteEvent(index) {
-      this.events.splice(index, 1)
-      this.saveEvents()
+      if (index >= 0 && index < this.events.length) {
+        this.events.splice(index, 1)
+        this.saveEvents()
+        this.focusTitleInput()
+      }
+    },
+    getEventKey(event, index) {
+      // 使用事件的时间戳和标题创建唯一key
+      return `event-${event.start?.getTime() || Date.now()}-${event.title || index}-${index}`
     },
     formatDateTime(date) {
       if (!date) return ''
@@ -170,6 +229,8 @@ export default {
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 10px;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
 }
 
 .event-form {
@@ -182,6 +243,9 @@ export default {
   border-radius: 15px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  z-index: 5;
+  pointer-events: auto;
 }
 
 .form-title {
@@ -252,6 +316,15 @@ export default {
 
 .submit-btn:active {
   transform: translateY(0);
+}
+
+.submit-btn:focus {
+  outline: none;
+}
+
+.submit-btn:focus-visible {
+  outline: 2px solid #42b983;
+  outline-offset: 2px;
 }
 
 .btn-icon {
